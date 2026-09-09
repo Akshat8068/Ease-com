@@ -1,0 +1,21 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table posts {
+  id uuid [primary key, default: `gen_random_uuid()`]
+  tenant_id uuid [not null]
+  page_id uuid [not null]
+  external_post_id varchar(255) [not null, unique]
+  channel varchar(50) [not null]
+  caption text
+  media_type varchar(50)
+  media_url text
+  post_url text
+  like_count integer [not null, default: 0]
+  comment_count integer [not null, default: 0]
+  posted_at timestamp
+  fetched_at timestamp [not null, default: `now()`]
+}
+
+Ref posts_to_tenants: posts.tenant_id > tenants.id // many-to-one
+Ref posts_to_pages: posts.page_id > pages.id // many-to-one
