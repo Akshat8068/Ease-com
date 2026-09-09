@@ -1,0 +1,20 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table shared_media {
+  id uuid [primary key, default: `gen_random_uuid()`]
+  conversation_room_id uuid [not null]
+  message_id uuid [not null]
+  tenant_id uuid [not null]
+  media_type varchar(50) [not null]
+  url text [not null]
+  thumbnail_url text
+  file_name varchar(255)
+  file_size integer
+  mime_type varchar(100)
+  created_at timestamp [not null, default: `now()`]
+}
+
+Ref shared_media_to_conversation_rooms: shared_media.conversation_room_id > conversation_rooms.id // many-to-one
+Ref shared_media_to_messages: shared_media.message_id > messages.id // many-to-one
+Ref shared_media_to_tenants: shared_media.tenant_id > tenants.id // many-to-one

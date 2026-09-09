@@ -1,0 +1,11 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table internal_notes {
+  id uuid [primary key, default: `gen_random_uuid()`]
+  conversation_room_id uuid [not null]
+  text text [not null]
+  created_at timestamp [not null, default: `now()`]
+}
+
+Ref internal_notes_to_conversation_rooms: internal_notes.conversation_room_id > conversation_rooms.id // many-to-one

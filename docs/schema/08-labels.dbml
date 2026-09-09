@@ -1,0 +1,13 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table labels {
+  id uuid [primary key, default: `gen_random_uuid()`]
+  tenant_id uuid [not null]
+  name varchar(100) [not null]
+  color varchar(20)
+  is_active boolean [not null, default: true]
+  created_at timestamp [not null, default: `now()`]
+}
+
+Ref labels_to_tenants: labels.tenant_id > tenants.id // many-to-one

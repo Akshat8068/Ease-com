@@ -1,0 +1,23 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table messages {
+  id uuid [primary key, default: `gen_random_uuid()`]
+  conversation_room_id uuid [not null]
+  tenant_id uuid [not null]
+  sender_type varchar(20) [not null]
+  sender_id uuid [note: 'standard ID so use as a customer ID or agent ID']
+  message_type varchar(50) [not null, default: 'text']
+  content text
+  payload jsonb
+  is_internal_note boolean [not null, default: false]
+  is_visible_to_customer boolean [not null, default: true]
+  quoted_message_id uuid
+  external_msg_id varchar(255)
+  sent_at timestamp [not null, default: `now()`]
+  is_deleted boolean [not null, default: false]
+}
+
+Ref messages_to_conversation_rooms: messages.conversation_room_id > conversation_rooms.id // many-to-one
+Ref messages_to_tenants: messages.tenant_id > tenants.id // many-to-one
+Ref messages_to_self_quoted: messages.quoted_message_id > messages.id // many-to-one

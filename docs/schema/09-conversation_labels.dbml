@@ -1,0 +1,15 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table conversation_labels {
+  ticket_id uuid [not null]
+  label_id uuid [not null]
+  created_at timestamp [not null, default: `now()`]
+  
+  indexes {
+    (ticket_id, label_id) [pk]
+  }
+}
+
+Ref conversation_labels_to_tickets: conversation_labels.ticket_id > tickets.id // many-to-one
+Ref conversation_labels_to_labels: conversation_labels.label_id > labels.id // many-to-one

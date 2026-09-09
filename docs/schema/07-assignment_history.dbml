@@ -1,0 +1,25 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table assignment_history {
+  id uuid [primary key, default: `gen_random_uuid()`]
+  ticket_id uuid [not null]
+  tenant_id uuid [not null]
+  assigned_from uuid
+  assigned_to uuid
+  assigned_by uuid
+  label_id uuid
+  reason_id uuid
+  order_id varchar(255)
+  action varchar(50) [not null]
+  note text
+  created_at timestamp [not null, default: `now()`]
+}
+
+Ref assignment_history_to_tickets: assignment_history.ticket_id > tickets.id // many-to-one
+Ref assignment_history_to_tenants: assignment_history.tenant_id > tenants.id // many-to-one
+Ref assignment_history_assigned_from: assignment_history.assigned_from > agents.id // many-to-one
+Ref assignment_history_assigned_to: assignment_history.assigned_to > agents.id // many-to-one
+Ref assignment_history_assigned_by: assignment_history.assigned_by > agents.id // many-to-one
+Ref assignment_history_to_labels: assignment_history.label_id > labels.id // many-to-one
+Ref assignment_history_to_reasons: assignment_history.reason_id > reasons.id // many-to-one

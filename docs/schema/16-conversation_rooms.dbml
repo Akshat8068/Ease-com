@@ -1,0 +1,14 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table conversation_rooms {
+  id uuid [primary key, default: `gen_random_uuid()`]
+  ticket_id uuid [not null]
+  customer_id uuid [not null]
+  agent_id uuid [not null]
+  created_at timestamp [not null, default: `now()`]
+}
+
+Ref conversation_rooms_to_tickets: conversation_rooms.ticket_id - tickets.id // one-to-one or one-to-many depending on use-case
+Ref conversation_rooms_to_customers: conversation_rooms.customer_id > customers.id // many-to-one
+Ref conversation_rooms_to_agents: conversation_rooms.agent_id > agents.id // many-to-one

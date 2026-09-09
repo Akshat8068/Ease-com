@@ -1,0 +1,11 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table slas {
+  id uuid [primary key, default: `gen_random_uuid()`]
+  text varchar(255) [not null]
+  time integer [not null, note: 'Time in minutes or standard representation']
+  color varchar(50) [not null]
+  created_at timestamp [not null, default: `now()`]
+  updated_at timestamp
+}

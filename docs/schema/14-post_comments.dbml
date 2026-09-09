@@ -1,0 +1,26 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+Table post_comments {
+  id uuid [primary key, default: `gen_random_uuid()`]
+  post_id uuid [not null]
+  tenant_id uuid [not null]
+  external_comment_id varchar(255) [not null, unique]
+  parent_comment_id uuid
+  commenter_external_id varchar(255) [not null]
+  commenter_name varchar(255)
+  commenter_avatar text
+  channel varchar(50) [not null]
+  content text
+  media_url text
+  is_hidden boolean [not null, default: false]
+  moved_to_dm boolean [not null, default: false]
+  dm_ticket_id uuid
+  commented_at timestamp
+  fetched_at timestamp [not null, default: `now()`]
+}
+
+Ref post_comments_to_posts: post_comments.post_id > posts.id // many-to-one
+Ref post_comments_to_tenants: post_comments.tenant_id > tenants.id // many-to-one
+Ref post_comments_to_self: post_comments.parent_comment_id > post_comments.id // many-to-one
+Ref post_comments_to_dm_tickets: post_comments.dm_ticket_id > tickets.id // many-to-one
