@@ -1,0 +1,42 @@
+SLA stops ONLY when agent sends a reply (outbound message).
+Opening the conversation or seeing the message
+has zero impact on SLA.
+System tracks read separately for UI only.
+
+Ticket Created
+      ↓
+Read priority → query sla_configs → get duration
+      ↓
+Check working_hours
+      ↓
+   IN hours?
+   ┌────┴────┐
+  YES        NO
+   ↓          ↓
+sla starts  sla starts at
+immediately next working slot
+   ↓          ↓
+Calculate sla_due_at
+      ↓
+Store on ticket + sla_log (started)
+      ↓
+Working hours end mid-SLA?
+→ pause clock + sla_log (paused)
+      ↓
+Next working slot?
+→ resume clock + sla_log (resumed)
+      ↓
+Priority changed?
+→ recalculate sla_due_at + sla_log (recalculated)
+      ↓
+Background job every 1 min
+→ sla_due_at passed + still unassigned?
+→ sla_breached = true + sla_log (breached)
+→ sla_breach auto reply fires
+→ overdue shown on ticket
+      ↓
+Ticket assigned
+→ SLA period ENDS + sla_log (stopped)
+      ↓
+Agent sends first reply
+→ first_reply_at recorded

@@ -1,0 +1,23 @@
+WAY 1 — From chat window (agent manually)
+→ agent opens ticket
+→ clicks send template button
+→ picks template from list (only approved ones shown)
+→ system fills variables from linked order/customer data
+→ sends via Meta outbound API
+→ logged in template_sends (sent_by = 'agent')
+
+WAY 2 — From journey step (automated)
+→ journey enrollment reaches a step
+→ step has template_id
+→ system checks template approved
+→ fills variables from client API event data
+→ sends via Meta outbound API
+→ logged in template_sends (sent_by = 'journey')
+
+WAY 3 — From client event/endpoint (triggered)
+→ client fires event to our system
+→ e.g. "order_shipped" with order data
+→ our system matches to configured template
+→ fills variables from event payload
+→ sends via Meta outbound API
+→ logged in template_sends (sent_by = 'event')

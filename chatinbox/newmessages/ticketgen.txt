@@ -1,0 +1,124 @@
+Ticket Generation — Complete Flow
+Step 1 — User sends a message on Meta
+
+Rajesh sends a message on Instagram DM
+to "The Himalayan Organics" page
+Step 2 — Meta fires the webhook
+Meta calls the client's integration service with a payload like:
+
+json
+
+{
+  "channel": "instagram",
+  "page_id": "IG_17841_4029",
+  "user_id": "ig_user_98765",
+  "user_name": "rajesh_fit",
+  "message": "My order is not delivered",
+  "timestamp": "2026-08-27T11:52:00Z",
+  "source_type": "direct_message",
+  "source_ref": null
+}
+Step 3 — Integration service forwards to our system
+Client's integration service hits our inbound webhook endpoint:
+
+
+POST /api/v1/inbound/message
+with the same payload + tenant info added.
+
+Step 4 — Our system runs the check
+
+Does an OPEN ticket exist for:
+  tenant_id  = this tenant
+  customer   = rajesh_fit (ig_user_98765)
+  channel    = instagram
+  status     ≠ resolved
+Step 5 — Two outcomes
+Case A — No open ticket found
+
+→ First check or previous ticket was resolved
+
+ACTIONS:
+1. Upsert customer record
+   (create if new, update name/handle if exists)
+
+2. INSERT new ticket
+   status     = unassigned
+   priority   = normal (default)
+   channel    = instagram
+   page_id    = IG_17841_4029
+   customer_id = resolved customer id
+   tenant_id  = this tenant
+   source_type = direct_message
+   created_at = now()
+   sla_due_at  = now() + SLA config of tenant
+
+3. INSERT first message
+   linked to new ticket_id
+   direction  = inbound
+   content    = "My order is not delivered"
+   timestamp  = from payload
+
+4. Ticket appears in New Messages (Unassigned list)
+Case B — Open ticket found
+
+→ Ticket already exists and is Unassigned or Assigned
+
+ACTIONS:
+1. INSERT new message
+   linked to existing ticket_id
+   direction  = inbound
+   content    = "My order is not delivered"
+   timestamp  = from payload
+
+2. UPDATE ticket
+   updated_at = now()
+
+3. Message appears in existing ticket's chat window
+   No new ticket created
+
+
+Meta Webhook
+     ↓
+Integration Service (client)
+     ↓
+POST /api/v1/inbound/message (our system)
+     ↓
+Parse payload
+     ↓
+Upsert Customer
+     ↓
+Check open ticket (tenant + customer + channel + status != resolved)
+     ↓
+        ┌─────────────┬──────────────────┐
+    NOT FOUND       FOUND
+        ↓               ↓
+  Create Ticket    Append Message
+  Insert Message   to existing ticket
+        ↓               ↓
+  Ticket in        Message in
+  Unassigned       existing chat
+  List             window
+
+What our inbound webhook does — in order
+
+1. Authenticate request (is this a valid tenant integration?)
+2. Parse payload (channel, page, user, message, source)
+3. Upsert customer record
+4. Query: open ticket for this customer + channel + tenant?
+5. No  → create ticket + insert message
+   Yes → insert message into existing ticket
+6. Emit real-time event (WebSocket)
+   → New Messages list updates instantly for the age
+
+Related Entities (we will design these next one by one)
+Entity	Purpose
+messages	all messages of a ticket
+internal_notes	agent-only notes on a ticket
+assignment_history	log of every agent transfer
+ticket_labels	label attached to ticket
+customers	user/customer profile
+tenant_pages	Meta pages of the tenant
+labels	categories
+reasons	sub-categories under labels
+
+

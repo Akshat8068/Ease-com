@@ -1,0 +1,130 @@
+instant reply 
+STEP 1
+New ticket created
+system checks working_hours
+→ current time = within working hours (e.g. 11am, Mon-Fri 10-6)
+
+STEP 2
+System queries auto_replies:
+WHERE tenant_id = this tenant
+  AND type      = 'instant'
+  AND is_active = true
+  AND (channel  = ticket.channel OR channel = 'all')
+
+STEP 3
+Match found
+→ take message text from auto_replies.message
+
+STEP 4
+System calls Meta outbound API (client integration)
+→ sends message to user on their channel
+
+STEP 5
+INSERT into messages table:
+direction     = outbound
+type          = auto_reply
+auto_reply_id = matched auto_reply.id
+content       = message text
+sent_at       = now()
+
+STEP 6
+Message appears in ticket chat window
+(agent can see it, user received it)
+
+STEP 7
+Ticket remains UNASSIGNED
+(auto reply does not assign the ticket)
+
+
+TYPE 2 — Away Message
+STEP 1
+New ticket created
+system checks working_hours
+→ current time = outside working hours (e.g. 9pm, or Sunday)
+
+STEP 2
+System queries auto_replies:
+WHERE tenant_id = this tenant
+  AND type      = 'away'
+  AND is_active = true
+  AND (channel  = ticket.channel OR channel = 'all')
+
+STEP 3
+Match found
+→ take message text from auto_replies.message
+
+STEP 4
+System calls Meta outbound API
+→ sends away message to user
+
+STEP 5
+INSERT into messages table:
+direction     = outbound
+type          = auto_reply
+auto_reply_id = matched auto_reply.id
+content       = message text
+sent_at       = now()
+
+STEP 6
+Message appears in ticket chat window
+
+STEP 7
+SLA clock does NOT start now
+→ SLA clock will start at next working hours slot
+
+STEP 8
+Ticket remains UNASSIGNED
+waiting for next working day
+when agent comes in and assigns it
+
+
+TYPE 3 — SLA Breach
+STEP 1
+Background job runs every X minutes
+checks all unassigned tickets:
+WHERE status       = 'unassigned'
+  AND sla_breached = false
+  AND sla_due_at  <= now() + buffer time
+  (buffer = e.g. 5 min before breach)
+
+STEP 2
+Matching tickets found
+→ these are tickets about to breach SLA
+
+STEP 3
+System queries auto_replies:
+WHERE tenant_id = this tenant
+  AND type      = 'sla_breach'
+  AND is_active = true
+  AND (channel  = ticket.channel OR channel = 'all')
+
+STEP 4
+Match found
+→ take message text from auto_replies.message
+
+STEP 5
+System calls Meta outbound API
+→ sends sla_breach message to user
+(e.g. "We apologize for the delay,
+       an agent will connect with you shortly")
+
+STEP 6
+INSERT into messages table:
+direction     = outbound
+type          = auto_reply
+auto_reply_id = matched auto_reply.id
+content       = message text
+sent_at       = now()
+
+STEP 7
+UPDATE ticket:
+sla_breached = true
+
+STEP 8
+INSERT into sla_logs:
+event    = breached
+event_at = now()
+
+STEP 9
+Overdue indicator shown on ticket
+in New Messages list for agents

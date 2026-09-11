@@ -1,0 +1,20 @@
+// Auto Replies — predefined automatic messages sent to user on new ticket creation
+// Three fixed types: instant (within working hours), away (outside working hours), sla_breach
+// Agent can only edit message, channel and is_active — cannot create or delete types
+
+Table auto_replies {
+  id          uuid        [primary key, default: `gen_random_uuid()`]
+  tenant_id   uuid        [not null]
+  type        varchar(20) [not null, note: 'ENUM: instant / away / sla_breach — predefined by dev, agent cannot change']
+  message     text        [not null, note: 'Message text sent to user — agent edits this']
+  channel     varchar(20) [not null, note: 'ENUM: instagram / facebook / whatsapp / all — agent selects']
+  is_active   boolean     [not null, default: true, note: 'Agent toggles on/off']
+  updated_by  uuid        [null, note: 'Last agent who edited']
+  updated_at  timestamp   [not null, default: `now()`]
+}
+
+Ref auto_replies_to_tenants:    auto_replies.tenant_id  > tenants.id   // many-to-one
+Ref auto_replies_updated_by:    auto_replies.updated_by > agents.id    // many-to-one
+
+
+Ref auto_replies_to_tenants: auto_replies.tenant_id > tenants.id // many-to-one

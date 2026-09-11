@@ -85,6 +85,14 @@ tenants
 | post_comments       | tenant_id            | tenants.id              | RESTRICT    |
 | post_comments       | parent_comment_id    | post_comments.id        | SET NULL    |
 | post_comments       | dm_conversation_id   | conversations.id        | SET NULL    |
+| journeys            | tenant_id            | tenants.id              | RESTRICT    |
+| journeys            | created_by           | agents.id               | RESTRICT    |
+| journeys            | updated_by           | agents.id               | SET NULL    |
+| journey_steps       | journey_id           | journeys.id             | CASCADE     |
+| journey_steps       | template_id          | templates.id            | RESTRICT    |
+| journey_enrollments | journey_id           | journeys.id             | RESTRICT    |
+| journey_enrollments | tenant_id            | tenants.id              | RESTRICT    |
+| journey_enrollments | customer_id          | customers.id            | RESTRICT    |
 
 ---
 

@@ -1,0 +1,18 @@
+// Working Hours — tenant ke liye day-by-day business hours
+// Controls: which auto reply fires (instant/away) + when SLA clock ticks
+// 7 rows per tenant (monday to sunday) — seeded on tenant onboard
+// Agent can only edit start_time, end_time, is_active
+
+Table working_hours {
+  id          uuid        [primary key, default: `gen_random_uuid()`]
+  tenant_id   uuid        [not null]
+  day         varchar(10) [not null, note: 'ENUM: monday / tuesday / wednesday / thursday / friday / saturday / sunday']
+  start_time  time        [not null]
+  end_time    time        [not null]
+  is_active   boolean     [not null, default: true, note: 'Agent toggles per day on/off']
+  updated_by  uuid        [null, note: 'Last agent who edited']
+  updated_at  timestamp   [not null, default: `now()`]
+}
+
+Ref working_hours_to_tenants:   working_hours.tenant_id  > tenants.id  // many-to-one
+Ref working_hours_updated_by:   working_hours.updated_by > agents.id   // many-to-one
