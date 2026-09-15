@@ -1,0 +1,28 @@
+// Journeys — automated lifecycle message sequences sent to customers along their timeline
+// 9 predefined journeys grouped into 3 families (conv, post, keep)
+// Live as soon as saved by agent; steps reference Meta-approved templates
+
+Table journeys {
+  id               uuid        [primary key, default: `gen_random_uuid()`]
+  tenant_id        uuid        [not null]
+  name             varchar(100) [not null, note: 'e.g. Abandoned cart, Order confirmation']
+  family           varchar(20) [not null, note: 'ENUM: conv / post / keep']
+  category         varchar(20) [not null, note: 'ENUM: utility / marketing']
+  trigger_event    varchar(255) [not null, note: 'Event from client API that starts this journey']
+  exit_condition   text        [not null, note: 'Condition or event that stops this journey']
+  exit_n           integer     [null, note: 'Exit time duration number']
+  exit_unit        varchar(10) [null, note: 'ENUM: minutes / hours / days']
+  is_active        boolean     [not null, default: true, note: 'Agent on/off toggle']
+  entered          integer     [not null, default: 0, note: 'Total customers enrolled (stats)']
+  sent             integer     [not null, default: 0, note: 'Total messages sent (stats)']
+  conv             integer     [not null, default: 0, note: 'Total conversions/orders (stats)']
+  revenue          bigint      [not null, default: 0, note: 'Revenue influenced in paise/cents (stats)']
+  created_by       uuid        [not null]
+  created_at       timestamp   [not null, default: `now()`]
+  updated_by       uuid        [null]
+  updated_at       timestamp   [not null, default: `now()`]
+}
+
+Ref journeys_to_tenants:     journeys.tenant_id  > tenants.id // many-to-one
+Ref journeys_created_by:     journeys.created_by > agents.id  // many-to-one
+Ref journeys_updated_by:     journeys.updated_by > agents.id  // many-to-one

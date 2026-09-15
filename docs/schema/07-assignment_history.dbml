@@ -12,7 +12,6 @@ Table assignment_history {
   reason_id uuid
   order_id varchar(255)
   action varchar(50) [not null]
-  note text
   created_at timestamp [not null, default: `now()`]
 }
 

@@ -1,33 +1,30 @@
 client confuse before resolve , so when click resolve need to must select reason if not select so not resolve,
-resolve = helpful 
-sla label,resons =setting approved
-auto replies = approved
-key word= skip llm not use cases plan after 
 saved reply data h = api give get order lsist ek api a data realed predefined cart automation msg list of customer ,cart ki api 
-journey creation not = no need to create, cases in shopify out of the box need to create template, joury already need cart api given, event given
-post = categroiges , darg drop by url approved good , facebook api overview
-auto reply assign ke phele , 
+journey creation not = no need to create, cases in shopify out of the box need to create template, journey already need cart api given, event given
+post =  facebook api overview
 workflow=skip , in estaimation, keyword also
-label = reason main category
+label category and reason sub category
 
-
-template status also approved by meta 
-
-template done by sample data , suggestions = ui create drag csv, and trigger ui 
+Reamianing part
 deployment
 share media remaining
 
-only cases post unread section cases post read unread  sceiro 
 label ko category and reason=  sub category , order h to order ttacking ke andr usko sub dikh jynge basically 
 
 
-resolve do you want ticket yes , no , must select reason in prototype,
+resolve do you want ticket yes , no , must select reason in prototype after that resolve button works,
 sla  reason ,labels,
-meta api give price,revenue api give
-auto reply create by us, 
-keyword rule when trigger,llm part not use case plan, 
+meta api give price,revenue api give  
 saved reply order api data,predefined data api , all works,autmation message send , user list api
-cart me data aya h , to uski api denge event denege, to jesse hi msg aya h to temapet fire kr deneg
+cart me data aya h , to uski api denge or may be event denege, to jesse hi msg aya h to template fire kr deneg
 journey kese bnae h shopify have cases, like temaplate = jouryne
-temaplet ka dat apai se ayenga kis endpoint kr ebheja h to vo bhi dnege
+template ka data api se ayenga kis endpoint pe bheja h to vo bhi dnege
 auto reply hum bhejnege assign ke phele
+
+
+sla ticket unassign = normal message not seen by agent 
+sla yesterday , if business hours close so remaing sla so next day it show yesterday or hour
+sla stop when agent send outbound message 
+
+agent not create this , only edit this part 
+

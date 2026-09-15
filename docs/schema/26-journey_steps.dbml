@@ -1,0 +1,20 @@
+// Journey Steps — individual sequential steps within a journey
+// Each step defines a wait time, template to send, optional offer value, and optional condition
+
+Table journey_steps {
+  id               uuid        [primary key, default: `gen_random_uuid()`]
+  journey_id       uuid        [not null]
+  step_order       integer     [not null, note: '1, 2, 3... sequence order']
+  wait_n           integer     [null, note: 'Wait duration number (e.g., 45, 24, 0)']
+  wait_unit        varchar(10) [null, note: 'ENUM: minutes / hours / days']
+  wait_label       varchar(50) [not null, note: 'Display text e.g. "45 minutes", "+ 24 hours", "Day 25"']
+  template_id      uuid        [not null, note: 'FK -> templates (approved Meta template)']
+  condition        varchar(50) [null, note: 'Optional condition e.g. "COD only", "if rated 4 or 5"']
+  offer_value      varchar(20) [null, note: 'Optional offer value filling {{Offer}} variable e.g. "10%"']
+  note             text        [null, note: 'Internal strategy / rationale note']
+  created_at       timestamp   [not null, default: `now()`]
+  updated_at       timestamp   [not null, default: `now()`]
+}
+
+Ref journey_steps_to_journeys:  journey_steps.journey_id  > journeys.id   // many-to-one (cascade)
+Ref journey_steps_to_templates: journey_steps.template_id > templates.id  // many-to-one

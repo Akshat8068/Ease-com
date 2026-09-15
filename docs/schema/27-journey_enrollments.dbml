@@ -1,0 +1,21 @@
+// Journey Enrollments — tracks active and completed customer enrollments in journeys
+// Ensures customers receive messages at the right intervals and exits when conditions are met
+
+Table journey_enrollments {
+  id               uuid        [primary key, default: `gen_random_uuid()`]
+  journey_id       uuid        [not null]
+  tenant_id        uuid        [not null]
+  customer_id      uuid        [not null]
+  order_id         varchar(100) [null, note: 'External order ID or cart session reference from client API']
+  status           varchar(20) [not null, default: 'active', note: 'ENUM: active / completed / exited']
+  current_step     integer     [not null, default: 1, note: 'Step number customer is currently waiting for or executed']
+  enrolled_at      timestamp   [not null, default: `now()`, note: 'When customer entered journey']
+  exited_at        timestamp   [null, note: 'When customer completed or exited journey']
+  exit_reason      varchar(100) [null, note: 'Reason e.g. "order placed", "timeout", "opted out"']
+  created_at       timestamp   [not null, default: `now()`]
+  updated_at       timestamp   [not null, default: `now()`]
+}
+
+Ref journey_enrollments_to_journeys:  journey_enrollments.journey_id  > journeys.id   // many-to-one
+Ref journey_enrollments_to_tenants:   journey_enrollments.tenant_id   > tenants.id    // many-to-one
+Ref journey_enrollments_to_customers: journey_enrollments.customer_id > customers.id  // many-to-one

@@ -1,0 +1,47 @@
+
+What if user never replies to the DM?
+
+Agent clicked Move to DM
+→ Our outbound message sent to user
+→ User never replied
+→ NO ticket is ever created
+→ Nothing appears in New Messages
+Ticket only exists if user responds.
+
+
+
+
+STEP 1
+Agent sees comment on Instagram post in Post & Comments tab
+Comment: "My order is not delivered" — by rajesh_fit
+
+STEP 2
+Agent clicks "Move to DM" on that comment
+
+STEP 3
+Our system calls Meta API (outbound)
+→ Sends a DM to rajesh_fit:
+  "Hi Rajesh, we saw your comment.
+   Please share your order details here
+   and we will help you."
+
+STEP 4
+Rajesh receives the DM on Instagram
+Rajesh replies: "Order number 1078812"
+
+STEP 5
+Rajesh's reply triggers Meta inbound rule
+→ Payload comes to our inbound webhook
+  channel      = instagram
+  source_type  = direct_message
+  user         = rajesh_fit
+  message      = "Order number 1078812"
+
+STEP 6
+Our system checks open ticket
+→ No open ticket for rajesh_fit + instagram
+→ NEW TICKET CREATED
+→ Appears in New Messages (Unassigned)
+
+source_type = direct_message
+(because it is now a DM conversation)
