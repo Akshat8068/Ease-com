@@ -1,0 +1,58 @@
+sadd users q w e r
+sadd otherusers p o i u  q  w
+sunion otherusers users
+sismember users q
+sinter users otherusers
+
+scard users
+
+
+
+
+zadd scoreboard 1 user1
+zadd scoreboard 91 user2
+zadd scoreboard 6 user3
+zadd scoreboard 3 user4
+zrange scoreboard 0 -1
+ZREVRANGE scoreboard 0  -1
+zrank scoreboard user1
+zrange scoreboard 1 5 BYSCORE
+
+
+hset user:1 name "Akshat" age 21 city "indore"
+hget user:1 age 
+hmget user:1 city name age
+hgetall user:1
+hdel user:1 city age
+HEXISTS user:1 city
+hgetall user:1 
+
+
+
+setbit onlineusers 0 1
+setbit onlineusers 1 1
+setbit onlineusers 2 1
+setbit onlineusers 3 1
+setbit onlineusers 4 0
+
+getbit onlineusers 2
+
+bitcount onlineusers
+
+pfadd day:monday user1 user2 user3 user4 user5 user2 user2 user8 dnfdwa dfv fdvd edcd sfdew xcdvvde
+pfcount day:monday
+pfadd day:tuesday user1 user2 user3 
+pfadd day:wed user1 user2 user3 user4 user5 user7 user6
+pfcount day:tuesday
+pfcount day:wed
+PFMERGE day:total day:monday day:tuesday day:wed
+pfcount day:total
+
+
+xadd order * isplaced false incart  true cartAdded 10:20 id 102
+xadd order * isplaced true incart false orderAdded 11:00 id 102
+xadd order * isplaced false incart  false cartAdded 00:50 id 101
+xadd history * placedat 11:00  orderid 101 cod false
+XREAD STREAMS history 0
+XGROUP CREATE order order-workers 0
+XREADGROUP GROUP order-workers worker1 COUNT 1 STREAMS order >
